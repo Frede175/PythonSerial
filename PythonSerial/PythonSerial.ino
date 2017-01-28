@@ -5,12 +5,24 @@
 */
 
 #include <Servo.h>
+#include <Wire.h>  // Comes with Arduino IDE
+// Get the LCD I2C Library here: 
+// https://bitbucket.org/fmalpartida/new-liquidcrystal/downloads
+// Move any other LCD libraries to another folder or delete them
+// See Library "Docs" folder for possible commands etc.
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
 
 Servo servos[12];
 
 // the setup function runs once when you press reset or power the board
 void setup() {
+	lcd.begin(16, 2);
+	lcd.backlight();
+	lcd.setCursor(0, 0);
+	printToLCD("Not setup!");
 	Serial.begin(115200);
+	
 	
 }
 
@@ -53,7 +65,12 @@ void loop() {
 			servos[pin].attach(value);
 		}
 		break;
-			
+	case 'D':
+		c = command.charAt(2);
+		if (c == 'T') {
+			printToLCD(getValue(command, ':', 2));
+		}
+		break;
 	default:
 		break;
 	}
@@ -79,3 +96,32 @@ String getValue(String data, char separator, int index)
 	}
 	return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
 }
+
+
+
+void printToLCD(String text) {
+	lcd.clear();
+	lcd.setCursor(0, 0);
+	int strlength = text.length();
+	if (strlength > 32) {
+	printToLCD("Error: Failed to print");
+	return;
+	}
+	if (strlength <= 16) {
+	lcd.print(text);
+	}
+	//Convert to double line
+	else {
+	int index = 0;
+	index = text.indexOf(' ', index);
+	int oldIndex;
+	while (index <= 16) {
+	oldIndex = index;
+	index = text.indexOf(' ', index + 1);
+	}
+	lcd.print(text.substring(0, oldIndex));
+	lcd.setCursor(0, 1);
+	lcd.print(text.substring(oldIndex + 1, strlength));
+	}
+}
+
