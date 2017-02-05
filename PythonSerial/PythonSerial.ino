@@ -23,7 +23,6 @@ void setup() {
 	printToLCD("Not setup!");
 	Serial.begin(115200);
 	
-	
 }
 
 // the loop function runs over and over again until power down or reset
