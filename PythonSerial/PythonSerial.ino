@@ -52,6 +52,10 @@ void loop() {
 			value = digitalRead(pin);
 			Serial.println(value);
 		}
+		else if (c == 'A') {
+			value = analogRead(pin);
+			Serial.println(value);
+		}
 	case 'S':
 		c = command.charAt(2);
 		pin = getValue(command, ':', 2).toInt();
